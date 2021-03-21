@@ -24,15 +24,15 @@
     Public Property FopCon As String
     Public Property FopCre As String
     Public Property NroOt As String
-    Public Property FecDoc As String
+    'Public Property FecDoc As String
     Public Property EstaOt As String
     Public Property EstRec As String
     Public Property EtapOt As String
     Public Property PrioOt As String
-    Public Property FecRec As String
-    Public Property FecCie As String
-    Public Property FecEnt As String
-    Public Property FeEsCu As String
+    'Public Property FecRec As String
+    'Public Property FecCie As String
+    'Public Property FecEnt As String
+    'Public Property FeEsCu As String
     Public Property HorRec As String
     Public Property HorEnt As String
     Public Property HoEsCu As String
@@ -48,14 +48,14 @@
     Public Property Gato As String
     Public Property Auxil As String
     Public Property ComCor As String
-    Public Property OTPer As List(Of OtPer)
-    Public Property OTRep As List(Of OtRep)
-    Public Property OTIma As List(Of OtIma)
-    Public Property OTMat As List(Of OtMat)
-    Public Property OTTec As List(Of OtTec)
-    Public Property OTCot As List(Of OtCot)
-    Public Property OTHis As List(Of OtHis)
-    Public Property OTTra As List(Of OtTra)
+    'Public Property OTPer As List(Of OtPer)
+    'Public Property OTRep As List(Of OtRep)
+    'Public Property OTIma As List(Of OtIma)
+    'Public Property OTMat As List(Of OtMat)
+    'Public Property OTTec As List(Of OtTec)
+    'Public Property OTCot As List(Of OtCot)
+    'Public Property OTHis As List(Of OtHis)
+    'Public Property OTTra As List(Of OtTra)
 
 End Class
 

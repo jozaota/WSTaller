@@ -115,6 +115,9 @@ Public Class Taller
 
         Try
 
+            Sbo = ClsSap.ObSbo
+            SboSrv = ClsSap.ObSboServ
+
             OTREP = ObtenerValor("SELECT SonName FROM UDO1 WHERE Code = 'OT' AND TableName = 'OTREP'")
             OTPER = ObtenerValor("SELECT SonName FROM UDO1 WHERE Code = 'OT' AND TableName = 'OTPER'")
             OTIMA = ObtenerValor("SELECT SonName FROM UDO1 WHERE Code = 'OT' AND TableName = 'OTIMA'")
@@ -148,29 +151,52 @@ Public Class Taller
             oGeneralData.SetProperty("U_TE2CLI", value.Te2Cli)
             oGeneralData.SetProperty("U_CIUCLI", value.CiuCli)
             oGeneralData.SetProperty("U_MAIL", value.Mail)
-            oGeneralData.SetProperty("U_KMS", value.Kms)
+            'oGeneralData.SetProperty("U_KMS", value.Kms)
+            oGeneralData.SetProperty("U_KMS", 0)
             oGeneralData.SetProperty("U_CONO", value.Cono)
             oGeneralData.SetProperty("U_NIVCOM", value.NivCom)
-            oGeneralData.SetProperty("U_FOPCON", value.FopCon)
-            oGeneralData.SetProperty("U_FOPCRE", value.FopCre)
+            If value.FopCon = "" Then
+                oGeneralData.SetProperty("U_FOPCON", "Y")
+            Else
+                oGeneralData.SetProperty("U_FOPCON", value.FopCon)
+            End If
+            If value.FopCre = "" Then
+                oGeneralData.SetProperty("U_FOPCRE", "N")
+            Else
+                oGeneralData.SetProperty("U_FOPCRE", value.FopCre)
+            End If
             oGeneralData.SetProperty("U_NROOT", value.NroOt)
-            oGeneralData.SetProperty("U_FECDOC", value.FecDoc)
+            'If value.FecDoc = "" Or value.FecDoc Is Nothing Then
+            '    oGeneralData.SetProperty("U_FECDOC", Date.Now)
+            'Else
+            '    oGeneralData.SetProperty("U_FECDOC", value.FecDoc)
+            'End If
             oGeneralData.SetProperty("U_ESTAOT", value.EstaOt)
             oGeneralData.SetProperty("U_ESTREC", value.EstRec)
             oGeneralData.SetProperty("U_ETAPOT", value.EtapOt)
             oGeneralData.SetProperty("U_PRIOOT", value.PrioOt)
-            oGeneralData.SetProperty("U_FECREC", value.FecRec)
-            oGeneralData.SetProperty("U_FECCIE", value.FecCie)
-            oGeneralData.SetProperty("U_FECENT", value.FecEnt)
-            oGeneralData.SetProperty("U_FEESCU", value.FeEsCu)
-            oGeneralData.SetProperty("U_HORREC", value.HorRec)
-            oGeneralData.SetProperty("U_HORENT", value.HorEnt)
-            oGeneralData.SetProperty("U_HOESCU", value.HoEsCu)
-            oGeneralData.SetProperty("U_TOTHOR", value.TotHor)
-            oGeneralData.SetProperty("U_TOTCOS", value.TotCos)
+            'oGeneralData.SetProperty("U_FECREC", value.FecRec)
+            'oGeneralData.SetProperty("U_FECCIE", value.FecCie)
+            'oGeneralData.SetProperty("U_FECENT", value.FecEnt)
+            'oGeneralData.SetProperty("U_FEESCU", value.FeEsCu)
+            'oGeneralData.SetProperty("U_FECREC", Date.Now)
+            'oGeneralData.SetProperty("U_FECCIE", Date.Now)
+            'oGeneralData.SetProperty("U_FECENT", Date.Now)
+            'oGeneralData.SetProperty("U_FEESCU", Date.Now)
+            'oGeneralData.SetProperty("U_HORREC", value.HorRec)
+            'oGeneralData.SetProperty("U_HORENT", value.HorEnt)
+            'oGeneralData.SetProperty("U_HOESCU", value.HoEsCu)
+            'oGeneralData.SetProperty("U_TOTHOR", value.TotHor)
+            'oGeneralData.SetProperty("U_TOTCOS", value.TotCos)
+            oGeneralData.SetProperty("U_TOTHOR", 0)
+            oGeneralData.SetProperty("U_TOTCOS", 0)
             oGeneralData.SetProperty("U_ALINEA", value.Alinea)
-            oGeneralData.SetProperty("U_MANTKM", value.MantKm)
-            oGeneralData.SetProperty("U_TASRUE", value.TasRue)
+            'If value.MantKm = "" Then
+            oGeneralData.SetProperty("U_MANTKM", 0)
+                'Else
+                '    oGeneralData.SetProperty("U_MANTKM", value.MantKm)
+                'End If
+                oGeneralData.SetProperty("U_TASRUE", value.TasRue)
             oGeneralData.SetProperty("U_EXTIN", value.Extin)
             oGeneralData.SetProperty("U_BALIZA", value.Baliza)
             oGeneralData.SetProperty("U_HERRAM", value.Herram)
@@ -179,18 +205,18 @@ Public Class Taller
             oGeneralData.SetProperty("U_AUXIL", value.Auxil)
             oGeneralData.SetProperty("U_COMCOR", value.ComCor)
 
-            If value.OTRep.Count > 0 Then
-                oSons = oGeneralData.Child(OTREP)
+            'If value.OTRep.Count > 0 Then
+            '    oSons = oGeneralData.Child(OTREP)
 
-                For i As Integer = 0 To value.OTRep.Count - 1
-                    oSon = oSons.Add()
-                    oSon.SetProperty("U_TARREP", value.OTRep(i).TarRep)
-                    oSon.SetProperty("U_DESREP", value.OTRep(i).DesRep)
-                    oSon.SetProperty("U_HORREP", value.OTRep(i).HorRep)
-                    oSon.SetProperty("U_COSREP", value.OTRep(i).CosRep)
-                    oSon.SetProperty("U_COMEN", value.OTRep(i).Comen)
-                Next
-            End If
+            '    For i As Integer = 0 To value.OTRep.Count - 1
+            '        oSon = oSons.Add()
+            '        oSon.SetProperty("U_TARREP", value.OTRep(i).TarRep)
+            '        oSon.SetProperty("U_DESREP", value.OTRep(i).DesRep)
+            '        oSon.SetProperty("U_HORREP", value.OTRep(i).HorRep)
+            '        oSon.SetProperty("U_COSREP", value.OTRep(i).CosRep)
+            '        oSon.SetProperty("U_COMEN", value.OTRep(i).Comen)
+            '    Next
+            'End If
 
             oGeneralService.Add(oGeneralData)
 
