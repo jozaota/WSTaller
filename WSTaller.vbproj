@@ -136,6 +136,7 @@
     <Compile Include="Objetos\OrdenTrabajo.vb" />
     <Compile Include="Objetos\Pedido.vb" />
     <Compile Include="Objetos\PedidoDet.vb" />
+    <Compile Include="Objetos\PreOt.vb" />
     <Compile Include="Taller.asmx.vb">
       <DependentUpon>Taller.asmx</DependentUpon>
       <SubType>Component</SubType>

@@ -102,7 +102,7 @@ Public Class Taller
     End Function
 
     <WebMethod>
-    Public Function AgregarOT(<FromBody> ByVal value As OrdenTrabajo) As Integer
+    Private Function AgregarOT(<FromBody> ByVal value As OrdenTrabajo) As Integer
 
         Dim OTREP As String = String.Empty
         Dim OTPER As String = String.Empty
@@ -193,10 +193,10 @@ Public Class Taller
             oGeneralData.SetProperty("U_ALINEA", value.Alinea)
             'If value.MantKm = "" Then
             oGeneralData.SetProperty("U_MANTKM", 0)
-                'Else
-                '    oGeneralData.SetProperty("U_MANTKM", value.MantKm)
-                'End If
-                oGeneralData.SetProperty("U_TASRUE", value.TasRue)
+            'Else
+            '    oGeneralData.SetProperty("U_MANTKM", value.MantKm)
+            'End If
+            oGeneralData.SetProperty("U_TASRUE", value.TasRue)
             oGeneralData.SetProperty("U_EXTIN", value.Extin)
             oGeneralData.SetProperty("U_BALIZA", value.Baliza)
             oGeneralData.SetProperty("U_HERRAM", value.Herram)
@@ -230,5 +230,137 @@ Public Class Taller
 
     End Function
 
+
+    <WebMethod>
+    Public Function AgregarPreOt(<FromBody> ByVal value As PreOt) As String
+
+        Dim FechaDoc As String = String.Empty
+        Dim FechaAge As String = String.Empty
+        Dim ObBubbleEvent As Boolean
+
+        Try
+
+            Sbo = ClsSap.ObSbo
+            SboSrv = ClsSap.ObSboServ
+
+            oGeneralService = SboSrv.GetGeneralService("PREOT")
+            oGeneralData = oGeneralService.GetDataInterface(GeneralServiceDataInterfaces.gsGeneralData)
+
+            If value.CodCli = "" Then
+                Return "Para crear una Pre Orden de Trabajo debe escoger un Cliente, por favor escoja un cliente..."
+            Else
+                oGeneralData.SetProperty("U_CODCLI", value.CodCli)
+            End If
+            oGeneralData.SetProperty("U_NOMCLI", value.NomCli)
+            oGeneralData.SetProperty("U_RUCCLI", value.RucCli)
+            oGeneralData.SetProperty("U_DIRCLI", value.DirCli)
+            oGeneralData.SetProperty("U_TE1CLI", value.Te1Cli)
+            oGeneralData.SetProperty("U_TE2CLI", value.Te2Cli)
+            oGeneralData.SetProperty("U_CIUCLI", value.CiuCli)
+            oGeneralData.SetProperty("U_MAIL", value.Mail)
+            If value.CodVeh = "" Then
+                Return "Para crear una Pre Orden de Trabajo debe escoger un Vehículo, por favor escoja una"
+            Else
+                oGeneralData.SetProperty("U_CODVEH", value.CodVeh)
+            End If
+            oGeneralData.SetProperty("U_NOMVEH", value.NomVeh)
+            oGeneralData.SetProperty("U_MARCA", value.Marca)
+            oGeneralData.SetProperty("U_MODELO", value.Modelo)
+            oGeneralData.SetProperty("U_NROOT", value.NroOt)
+            If value.FecDoc = "" Then
+                oGeneralData.SetProperty("U_FECDOC", Date.Now) 'FechaDoc.Replace("-", ""))
+            Else
+                oGeneralData.SetProperty("U_FECDOC", value.FecDoc) 'FechaDoc.Replace("-", ""))
+            End If
+            oGeneralData.SetProperty("U_ESTAGE", "1")
+            If value.FecAge = "" Then
+                oGeneralData.SetProperty("U_FECAGE", Date.Now) 'FechaAge.Replace("-", ""))
+            Else
+                oGeneralData.SetProperty("U_FECAGE", value.FecAge) 'FechaAge.Replace("-", ""))
+            End If
+            oGeneralData.SetProperty("U_COMCOR", value.ComCor)
+
+            oGeneralService.Add(oGeneralData)
+
+            LiberarObjeto(oGeneralService)
+
+            ObBubbleEvent = AgregarActividad()
+            If ObBubbleEvent = False Then
+                Return "No se pudo crear la actividad..."
+            End If
+
+            Return "0"
+        Catch ex As Exception
+            Return "1"
+        End Try
+
+    End Function
+
+    Private Function AgregarActividad() As Boolean
+
+        Dim ObBubbleEvent As Boolean
+        Dim DocEntry As Integer = 0
+        Dim DocNum As Integer = 0
+        Dim CodCli As String = String.Empty
+        Dim Comentario As String = String.Empty
+        Dim Fecha As String = String.Empty
+        Dim oActivitiesService As SAPbobsCOM.ActivitiesService
+        Dim oActivity As SAPbobsCOM.Activity
+        Dim oActivityParams As SAPbobsCOM.ActivityParams
+        Dim Code As Integer = 0
+
+        ObBubbleEvent = True
+
+        Try
+
+            Sbo = ClsSap.ObSbo
+            SboSrv = ClsSap.ObSboServ
+
+            oRecordSet = Sbo.GetBusinessObject(BoObjectTypes.BoRecordset)
+            oRecordSet.DoQuery("SELECT * FROM ""@PREOT"" ")
+            oRecordSet.MoveLast()
+
+            DocEntry = oRecordSet.Fields.Item("DocEntry").Value
+            DocNum = oRecordSet.Fields.Item("DocNum").Value
+            CodCli = oRecordSet.Fields.Item("U_CODCLI").Value
+            Comentario = oRecordSet.Fields.Item("U_COMCOR").Value
+            Fecha = oRecordSet.Fields.Item("U_FECAGE").Value
+
+            LiberarObjeto(oRecordSet)
+
+            oActivitiesService = SboSrv.GetBusinessService(ServiceTypes.ActivitiesService)
+            oActivity = oActivitiesService.GetDataInterface(ActivitiesServiceDataInterfaces.asActivity)
+
+            oActivity.CardCode = CodCli
+            oActivity.Activity = BoActivities.cn_Meeting
+            oActivity.ActivityDate = Fecha
+            oActivity.Notes = Comentario
+            oActivity.Details = "Agendamiento Pre Orden de trabajo nro: " & DocNum
+
+            oActivityParams = oActivitiesService.AddActivity(oActivity)
+            Code = oActivityParams.ActivityCode
+
+            LiberarObjeto(oActivitiesService)
+
+
+            oGeneralService = SboSrv.GetGeneralService("PREOT")
+            oGeneralData = oGeneralService.GetDataInterface(GeneralServiceDataInterfaces.gsGeneralData)
+            oGeneralParams = oGeneralService.GetDataInterface(GeneralServiceDataInterfaces.gsGeneralDataParams)
+            oGeneralParams.SetProperty("DocEntry", DocEntry)
+            oGeneralData = oGeneralService.GetByParams(oGeneralParams)
+
+            oGeneralData.SetProperty("U_CODACT", CStr(Code))
+
+            oGeneralService.Update(oGeneralData)
+            LiberarObjeto(oGeneralService)
+
+
+            Return ObBubbleEvent
+        Catch ex As Exception
+
+            Return False
+        End Try
+
+    End Function
 
 End Class
